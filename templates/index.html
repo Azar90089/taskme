@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Team Members</h2>
+    <form method="POST" action="/add_member">
+        <div class="input-group mb-3">
+            <input type="text" name="name" class="form-control" placeholder="Add Team Member" required>
+            <button class="btn btn-primary" type="submit">Add Member</button>
+        </div>
+    </form>
+    <ul class="list-group">
+        {% for member in team_members %}
+        <li class="list-group-item">
+            <h4>{{ member.name }} 
+                {% if pending_tasks_count[member.id] > 0 %}
+                    <span class="badge bg-warning">{{ pending_tasks_count[member.id] }} Pending Task{% if pending_tasks_count[member.id] > 1 %}s{% endif %}</span>
+                {% else %}
+                    <span class="badge bg-success">No Pending Tasks</span>
+                {% endif %}
+            </h4>
+            <form method="POST" action="/add_task/{{ member.id }}">
+                <div class="input-group mb-3">
+                    <input type="text" name="description" class="form-control" placeholder="Add Task" required>
+                    <button class="btn btn-success" type="submit">Add Task</button>
+                </div>
+            </form>
+            <ul class="list-group mt-3">
+                {% for task in member.tasks %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span class="{{ 'text-decoration-line-through' if task.completed else '' }}">{{ task.description }} ({{ task.created_at.strftime('%Y-%m-%d') }})</span>
+                        <div>
+                            {% if not task.completed %}
+                                <a href="{{ url_for('mark_completed', task_id=task.id) }}" class="btn btn-sm btn-success" title="Mark as Completed">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                            {% endif %}
+                            <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-warning" title="Edit Task">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ url_for('remove_task', task_id=task.id) }}" class="btn btn-sm btn-danger" title="Remove Task">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

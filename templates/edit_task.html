@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Edit Task</h2>
+    <form method="POST">
+        <div class="input-group mb-3">
+            <input type="text" name="description" class="form-control" value="{{ task.description }}" required>
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+        </div>
+    </form>
+{% endblock %}
